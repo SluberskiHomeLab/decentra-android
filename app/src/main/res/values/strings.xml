@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">Decentra</string>
+    <string name="server_url">Server URL</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="invite_code">Invite Code (optional for first user)</string>
+    <string name="login">Login</string>
+    <string name="signup">Sign Up</string>
+    <string name="connect">Connect</string>
+    <string name="disconnect">Disconnect</string>
+    <string name="send">Send</string>
+    <string name="type_message">Type a message...</string>
+    <string name="connecting">Connecting...</string>
+    <string name="connected">Connected</string>
+    <string name="disconnected">Disconnected</string>
+    <string name="error_empty_fields">Please fill in all required fields</string>
+    <string name="error_connection">Connection error: %s</string>
+    <string name="error_invalid_url">Invalid server URL</string>
+    <string name="settings">Settings</string>
+    <string name="save">Save</string>
+</resources>
