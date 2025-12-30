@@ -2,6 +2,13 @@
 
 Android application for Decentra that can be sideloaded onto Android devices to connect to self-hosted Decentra chat servers.
 
+## Documentation
+
+- **[README.md](README.md)** (this file) - Overview, features, and usage
+- **[BUILD.md](BUILD.md)** - Detailed build instructions and troubleshooting
+- **[ARCHITECTURE.md](ARCHITECTURE.md)** - Technical architecture and design
+- **[KNOWN_ISSUES.md](KNOWN_ISSUES.md)** - Known limitations and future improvements
+
 ## About Decentra
 
 Decentra is a self-hosted, decentralized Discord-like chat server. This Android app allows you to connect to your own Decentra instance and participate in real-time chat. Learn more about Decentra at: https://github.com/SluberskiHomeLab/decentra
