@@ -1,7 +1,6 @@
 package com.decentra.app.network
 
 import android.util.Log
-import com.decentra.app.models.Message
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import okhttp3.*
@@ -19,6 +18,9 @@ class DecentraWebSocketClient(
         .readTimeout(0, TimeUnit.MILLISECONDS)
         .build()
     private val gson = Gson()
+    
+    // Callback for handling incoming messages in the chat activity
+    var onMessageReceived: ((String) -> Unit)? = null
     
     companion object {
         private const val TAG = "DecentraWebSocket"
@@ -41,6 +43,8 @@ class DecentraWebSocketClient(
             override fun onMessage(webSocket: WebSocket, text: String) {
                 Log.d(TAG, "Message received: $text")
                 listener.onMessage(webSocket, text)
+                // Also notify the chat activity if callback is set
+                onMessageReceived?.invoke(text)
             }
             
             override fun onClosing(webSocket: WebSocket, code: Int, reason: String) {

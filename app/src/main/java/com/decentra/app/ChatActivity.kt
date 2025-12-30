@@ -63,12 +63,58 @@ class ChatActivity : AppCompatActivity() {
     }
     
     private fun setupWebSocketListener() {
-        // The WebSocket is already connected from MainActivity
-        // We just need to update the listener to handle chat messages
         if (webSocketClient == null) {
             Toast.makeText(this, "Not connected to server", Toast.LENGTH_SHORT).show()
             finish()
             return
+        }
+        
+        // Set up callback to receive messages from the server
+        webSocketClient?.onMessageReceived = { messageText ->
+            runOnUiThread {
+                handleIncomingMessage(messageText)
+            }
+        }
+    }
+    
+    private fun handleIncomingMessage(messageText: String) {
+        try {
+            val json = JsonParser.parseString(messageText).asJsonObject
+            
+            // Check if this is a chat message
+            if (json.has("type") && json.get("type").asString == "message") {
+                val username = json.get("username")?.asString ?: "Unknown"
+                val message = json.get("message")?.asString ?: ""
+                
+                val chatMessage = Message(
+                    username = username,
+                    message = message,
+                    timestamp = System.currentTimeMillis()
+                )
+                
+                messageAdapter.addMessage(chatMessage)
+                binding.messagesRecyclerView.scrollToPosition(messageAdapter.itemCount - 1)
+            } else if (json.has("type") && json.get("type").asString == "history") {
+                // Handle message history
+                val messages = json.getAsJsonArray("messages")
+                messages?.forEach { messageElement ->
+                    val msgObj = messageElement.asJsonObject
+                    val username = msgObj.get("username")?.asString ?: "Unknown"
+                    val message = msgObj.get("message")?.asString ?: ""
+                    
+                    val chatMessage = Message(
+                        username = username,
+                        message = message,
+                        timestamp = System.currentTimeMillis()
+                    )
+                    messageAdapter.addMessage(chatMessage)
+                }
+                binding.messagesRecyclerView.scrollToPosition(messageAdapter.itemCount - 1)
+            }
+        } catch (e: Exception) {
+            // If parsing fails, it might be a plain text message
+            // Just log it for now
+            android.util.Log.e("ChatActivity", "Error parsing message: $messageText", e)
         }
     }
     
@@ -81,21 +127,14 @@ class ChatActivity : AppCompatActivity() {
         
         webSocketClient?.sendChatMessage(messageText)
         
-        // Add message to UI optimistically
-        val message = Message(
-            username = currentUsername,
-            message = messageText,
-            timestamp = System.currentTimeMillis()
-        )
-        messageAdapter.addMessage(message)
-        
-        // Clear input and scroll to bottom
+        // Clear input immediately
         binding.messageInput.text?.clear()
-        binding.messagesRecyclerView.scrollToPosition(messageAdapter.itemCount - 1)
     }
     
     override fun onDestroy() {
         super.onDestroy()
+        // Clear the callback
+        webSocketClient?.onMessageReceived = null
         webSocketClient?.disconnect()
         webSocketClient = null
     }
